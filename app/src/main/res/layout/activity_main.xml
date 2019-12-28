@@ -12,20 +12,10 @@
         >
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#009688"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:title="@string/app_name">
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbartab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#009688"
+            android:background="#FCFCFC"
             app:layout_collapseMode="pin">
 
             <com.google.android.material.tabs.TabLayout
