@@ -27,7 +27,7 @@ public class FullScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen);
 
-        imageView=(SubsamplingScaleImageView) findViewById(R.id.image_view);
+        /*imageView=(SubsamplingScaleImageView) findViewById(R.id.image_view);
 
         Intent i=getIntent();
 
@@ -35,10 +35,12 @@ public class FullScreenActivity extends AppCompatActivity {
 
         ImageAdapter imageAdapter=new ImageAdapter(this);
 
-        imageView.setImage(ImageSource.resource(imageAdapter.imageArray[position]));
+        imageView.setImage(ImageSource.resource(imageAdapter.imageArray[position]));*/
 
         /*Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
+
+
      }
 
     @Override

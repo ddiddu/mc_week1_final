@@ -82,7 +82,7 @@ public class PhotoFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(getActivity().getApplicationContext(),FullScreenActivity.class);
+                Intent intent=new Intent(getActivity().getApplicationContext(),FullScreenActivity3.class);
                 intent.putExtra("id",position);
                 startActivity(intent);
             }
