@@ -1,17 +1,22 @@
 package com.example.mc_week1_final;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
 
 
 /**
@@ -63,15 +68,59 @@ public class ContactFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // 임의로 데이터 추가
+
+        int cnt = 1;
+        while(cnt <= 30) {
+            String name = "이름";
+            String phone = "010-0000-";
+            name = name.concat( Integer.toString(cnt));
+            phone = phone.concat(Integer.toString(cnt));
+            addItem(name, phone);
+            cnt ++;
+        }
+
     }
+    // 임의로 데이터 추가
+    public void addItem(String name, String phone) {
+        ContactListItem item = new ContactListItem();
+        item.setName(name);
+        item.setPhone(phone);
+        mList.add(item);
+    }
+
+
+
+    RecyclerView mRecyclerView = null;
+    ContactAdapter mAdapter = null;
+    ArrayList<ContactListItem> mList = new ArrayList<ContactListItem>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        /* Inflate the layout for this fragment */
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_contact, container, false);
+
+        // fragment 에서 getViewByID 가능하게 함
+        View view=inflater.inflate(R.layout.fragment_contact,container,false);
+
+
+        // 리사이클러 뷰 어뎁터
+        mRecyclerView = view.findViewById(R.id.contact_recycler);
+        mAdapter = new ContactAdapter(mList);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // 레이아웃매니저 지정 - Vertical
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+
+        // 리사이클러 뷰에 표시
+        mAdapter.notifyDataSetChanged();
+
+        return view;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

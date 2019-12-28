@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_call"
-        android:title="Call"
+        android:title="Contact"
         app:showAsAction="ifRoom"
         android:icon="@android:drawable/sym_call_outgoing"
         />
