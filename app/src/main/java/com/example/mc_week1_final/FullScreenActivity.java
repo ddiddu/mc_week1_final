@@ -3,6 +3,8 @@ package com.example.mc_week1_final;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.ToolbarWidgetWrapper;
 
 import android.content.Intent;
 import android.os.Build;
@@ -11,15 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toolbar;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 public class FullScreenActivity extends AppCompatActivity {
 
-    //ImageView imageView;
-    Toolbar toolbar;
     SubsamplingScaleImageView imageView;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -29,7 +28,6 @@ public class FullScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_screen);
 
         imageView=(SubsamplingScaleImageView) findViewById(R.id.image_view);
-        toolbar=(Toolbar) findViewById(R.id.toolbar);
 
         Intent i=getIntent();
 
@@ -38,6 +36,9 @@ public class FullScreenActivity extends AppCompatActivity {
         ImageAdapter imageAdapter=new ImageAdapter(this);
 
         imageView.setImage(ImageSource.resource(imageAdapter.imageArray[position]));
+
+        /*Toolbar toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
      }
 
     @Override
