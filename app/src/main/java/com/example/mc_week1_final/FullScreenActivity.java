@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toolbar;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -18,6 +19,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 public class FullScreenActivity extends AppCompatActivity {
 
     //ImageView imageView;
+    Toolbar toolbar;
     SubsamplingScaleImageView imageView;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -27,6 +29,7 @@ public class FullScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_screen);
 
         imageView=(SubsamplingScaleImageView) findViewById(R.id.image_view);
+        toolbar=(Toolbar) findViewById(R.id.toolbar);
 
         Intent i=getIntent();
 
