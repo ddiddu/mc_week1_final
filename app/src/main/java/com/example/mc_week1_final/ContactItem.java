@@ -3,7 +3,7 @@ package com.example.mc_week1_final;
 // 연락처 클래스
 public class ContactItem {
     private String phone_num, name;
-    private long photo_id=0, person_id=0;   // 사진
+    private long photo_id=0, person_id=0;   // 프로필 사진
     private int id;
 
     public void setName(String Name) { name = Name; }
@@ -18,30 +18,6 @@ public class ContactItem {
 
     public void setId(int id) {
         this.id = id;
-    }
-    public ContactItem() {}
-
-    @Override
-    public String toString() {
-        return this.phone_num;
-    }
-
-    @Override
-    public int hashCode() {
-        return getPhone_numChanged().hashCode();
-
-    }
-
-
-    // ????
-    public String getPhone_numChanged() {
-        return phone_num.replace("-", "");
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof ContactItem)
-            return getPhone_numChanged().equals(((ContactItem) o).getPhone_numChanged());
-        return false;
     }
 
 }

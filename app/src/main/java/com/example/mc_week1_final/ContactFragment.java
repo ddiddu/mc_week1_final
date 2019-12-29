@@ -1,13 +1,16 @@
 package com.example.mc_week1_final;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,8 +78,6 @@ public class ContactFragment extends Fragment {
     }
 
 
-
-
     RecyclerView mRecyclerView = null;
     ContactAdapter mAdapter = null;
 
@@ -84,34 +85,26 @@ public class ContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         /* Inflate the layout for this fragment */
-        setHasOptionsMenu(true);
-
-        // fragment 에서 getViewByID 가능하게 함
         View view=inflater.inflate(R.layout.fragment_contact,container,false);
 
-
+        setHasOptionsMenu(true);
 
         // 리사이클러 뷰 어뎁터
         mRecyclerView = view.findViewById(R.id.contact_recycler);
         mAdapter = new ContactAdapter(getContext(), getContactList());
         mRecyclerView.setAdapter(mAdapter);
 
-        // 레이아웃매니저 지정
+        // 레이아웃매니저
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView.LayoutManager layoutManager = linearLayoutManager;
         mRecyclerView.setLayoutManager(layoutManager);
-
-        // 리사이클러 뷰에 표시
-        mAdapter.notifyDataSetChanged();
 
         return view;
     }
 
 
-
     // 안드로이드 연락처 read
     public ArrayList<ContactItem> getContactList() {
-        // uri
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
@@ -119,45 +112,34 @@ public class ContactFragment extends Fragment {
                 ContactsContract.Contacts.PHOTO_ID,
                 ContactsContract.Contacts._ID
         };
-
-        String[] selectionArgs = null;
         String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
         // cursor 쿼리 -> 전화 정보 조회
+        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, sortOrder);
 
-
-        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, selectionArgs, sortOrder);
-
-        // ????
         LinkedHashSet<ContactItem> hasList = new LinkedHashSet<>();
-        ArrayList<ContactItem> contactsList;
 
         // 리턴 받은 Cursor의 인덱스값 -> ContactItem 클래스에 set
         if (cursor.moveToFirst()) {  // 전화번호 데이터가 있는 경우
             do {
-                long photo_id = cursor.getLong(2);
-                long person_id = cursor.getLong(3);
-
                 ContactItem myContact = new ContactItem();
                 myContact.setPhone_num(cursor.getString(0));    // 0 전화번호
                 myContact.setName(cursor.getString(1));
-                myContact.setPhoto_id(photo_id);
-                myContact.setPerson_id(person_id);
+                // myContact.setPhoto_id(cursor.getLong(2));
+                // myContact.setPerson_id(cursor.getLong(3));
 
                 hasList.add(myContact);
-
             }
-            while (cursor.moveToNext());    // ???
+            while (cursor.moveToNext());
         }
 
-        contactsList = new ArrayList<ContactItem>(hasList);
+        // RecyclerView 어뎁터에 전송할 List 형태로
+        ArrayList<ContactItem> contactsList = new ArrayList<ContactItem>(hasList);
         for (int i = 0; i < contactsList.size(); i++) {
             contactsList.get(i).setId(i);
         }
-
         return contactsList;
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
