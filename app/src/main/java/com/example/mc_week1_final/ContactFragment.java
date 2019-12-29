@@ -1,6 +1,8 @@
 package com.example.mc_week1_final;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 
 /**
@@ -68,33 +72,13 @@ public class ContactFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        // 임의로 데이터 추가
-
-        int cnt = 1;
-        while(cnt <= 30) {
-            String name = "이름";
-            String phone = "010-0000-";
-            name = name.concat( Integer.toString(cnt));
-            phone = phone.concat(Integer.toString(cnt));
-            addItem(name, phone);
-            cnt ++;
-        }
-
     }
-    // 임의로 데이터 추가
-    public void addItem(String name, String phone) {
-        ContactListItem item = new ContactListItem();
-        item.setName(name);
-        item.setPhone(phone);
-        mList.add(item);
-    }
+
 
 
 
     RecyclerView mRecyclerView = null;
     ContactAdapter mAdapter = null;
-    ArrayList<ContactListItem> mList = new ArrayList<ContactListItem>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,13 +90,16 @@ public class ContactFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_contact,container,false);
 
 
+
         // 리사이클러 뷰 어뎁터
         mRecyclerView = view.findViewById(R.id.contact_recycler);
-        mAdapter = new ContactAdapter(mList);
+        mAdapter = new ContactAdapter(getContext(), getContactList());
         mRecyclerView.setAdapter(mAdapter);
 
-        // 레이아웃매니저 지정 - Vertical
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        // 레이아웃매니저 지정
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = linearLayoutManager;
+        mRecyclerView.setLayoutManager(layoutManager);
 
         // 리사이클러 뷰에 표시
         mAdapter.notifyDataSetChanged();
@@ -122,11 +109,56 @@ public class ContactFragment extends Fragment {
 
 
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_contact,menu);
+    // 안드로이드 연락처 read
+    public ArrayList<ContactItem> getContactList() {
+        // uri
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.Contacts.PHOTO_ID,
+                ContactsContract.Contacts._ID
+        };
+
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+
+        // cursor 쿼리 -> 전화 정보 조회
+
+
+        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, selectionArgs, sortOrder);
+
+        // ????
+        LinkedHashSet<ContactItem> hasList = new LinkedHashSet<>();
+        ArrayList<ContactItem> contactsList;
+
+        // 리턴 받은 Cursor의 인덱스값 -> ContactItem 클래스에 set
+        if (cursor.moveToFirst()) {  // 전화번호 데이터가 있는 경우
+            do {
+                long photo_id = cursor.getLong(2);
+                long person_id = cursor.getLong(3);
+
+                ContactItem myContact = new ContactItem();
+                myContact.setPhone_num(cursor.getString(0));    // 0 전화번호
+                myContact.setName(cursor.getString(1));
+                myContact.setPhoto_id(photo_id);
+                myContact.setPerson_id(person_id);
+
+                hasList.add(myContact);
+
+            }
+            while (cursor.moveToNext());    // ???
+        }
+
+        contactsList = new ArrayList<ContactItem>(hasList);
+        for (int i = 0; i < contactsList.size(); i++) {
+            contactsList.get(i).setId(i);
+        }
+
+        return contactsList;
     }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

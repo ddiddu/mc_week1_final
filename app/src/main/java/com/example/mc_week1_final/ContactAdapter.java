@@ -1,5 +1,8 @@
 package com.example.mc_week1_final;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +15,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
-    private ArrayList<ContactListItem> mData = null;
 
-    public ContactAdapter(ArrayList<ContactListItem> list) {
+    private ArrayList<ContactItem> mData;
+    private Context mContext;
+    private LayoutInflater inflater;
+
+    public ContactAdapter(Context context, ArrayList<ContactItem> list) {
+        mContext = context;
         mData = list;
     }
 
     // item 뷰 위한 ViewHolder 객체 생성, 리턴
     @Override
     public ContactAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false);
+        inflater = LayoutInflater.from(mContext);
+
+        View view = inflater.inflate(R.layout.contact_item, parent, false);
         ContactAdapter.ViewHolder vh = new ContactAdapter.ViewHolder(view);
         return vh;
     }
@@ -30,11 +39,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder , int position ) {
 
-        ContactListItem item = mData.get(position);
-
-        // holder.pics.setImageDrawable(item.getPics());
+        ContactItem item = mData.get(position);
         holder.name.setText(item.getName());
-        holder.phone.setText(item.getPhone());
+        holder.phone.setText(item.getPhone_num());
+
 }
 
     // 전체 개수 리턴
