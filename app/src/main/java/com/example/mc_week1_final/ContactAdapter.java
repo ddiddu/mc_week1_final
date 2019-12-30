@@ -22,14 +22,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     private Context mContext;
     private LayoutInflater inflater;
-    private ArrayList<ContactItem> filteredList;    // 연락처 데이터 리스트(filter 입력값 없으면 전체)
-    private ArrayList<ContactItem> unfilteredList;
+    private ArrayList<ContactItem> filteredList;    // filter 보여질 리스트(filter 입력값 없으면 전체)
+    private ArrayList<ContactItem> contactDataList;  // 전체 리스트
 
     // 생성자에서 Context, 데이터 List 객체 전달받음
     public ContactAdapter(Context context, ArrayList<ContactItem> list) {
         mContext = context;
         filteredList = list;
-        unfilteredList = list;
+        contactDataList = list;
     }
 
     // contact_item뷰 -> ViewHolder 객체
@@ -77,11 +77,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             protected FilterResults performFiltering(CharSequence constraint) {
                 String charString = constraint.toString();      // 입력받은 값 string으로 변경
                 if (charString.isEmpty()) {
-                    filteredList = unfilteredList;
+                    filteredList = contactDataList;
                 }             // 검색값 없으면, 전체 연락처
                 else {
                     ArrayList<ContactItem> filteringList = new ArrayList<>();   // 필터링 중, 검색된 연락처 저장할 변수
-                    for (ContactItem name : unfilteredList) {                    // 반복문으로 전체 필터 체크
+                    for (ContactItem name : contactDataList) {                    // 반복문으로 전체 필터 체크
                         if (name.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteringList.add(name);
                         }
