@@ -1,6 +1,7 @@
 package com.example.mc_week1_final;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
 
 /**
@@ -27,6 +30,7 @@ public class PhotoFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    GridView gridView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,7 +74,20 @@ public class PhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_photo, container, false);
+        View view=inflater.inflate(R.layout.fragment_photo,container,false);
+
+        gridView=(GridView)view.findViewById(R.id.grid_view);
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext())); //context를 이 activity에서 가져오는 것
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(getActivity().getApplicationContext(),FullScreenActivity3.class);
+                intent.putExtra("id",position);
+                startActivity(intent);
+            }
+        });
+        return view;
     }
 
     @Override

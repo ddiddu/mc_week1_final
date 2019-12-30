@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar=(Toolbar) findViewById(R.id.toolbar);
-        toolbartab=(Toolbar) findViewById(R.id.toolbartab);
+        //toolbar=(Toolbar)findViewById(R.id.toolbar); //맨위에 toolbar 지정
+        toolbartab=(Toolbar)findViewById(R.id.toolbartab);
         viewPager=(ViewPager)findViewById(R.id.viewpager);
         tabLayout=(TabLayout)findViewById(R.id.tablayout);
 
