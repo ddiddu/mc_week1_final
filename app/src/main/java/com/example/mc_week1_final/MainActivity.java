@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         pageAdapter=new PageAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(new ContactFragment(), "연락처");
         pageAdapter.addFragment(new PhotoFragment(), "사진");
-        pageAdapter.addFragment(new tab3(), "tab3");
+        pageAdapter.addFragment(new MusicFragment(), "음악");
 
         viewPager.setAdapter(pageAdapter);
 

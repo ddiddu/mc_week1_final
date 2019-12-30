@@ -1,32 +1,45 @@
 package com.example.mc_week1_final;
 
+import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link tab3.OnFragmentInteractionListener} interface
+ * {@link MusicFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link tab3#newInstance} factory method to
+ * Use the {@link MusicFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class tab3 extends Fragment {
+public class MusicFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    GridView gridView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -34,7 +47,7 @@ public class tab3 extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public tab3() {
+    public MusicFragment() {
         // Required empty public constructor
     }
 
@@ -47,8 +60,8 @@ public class tab3 extends Fragment {
      * @return A new instance of fragment tab3.
      */
     // TODO: Rename and change types and number of parameters
-    public static tab3 newInstance(String param1, String param2) {
-        tab3 fragment = new tab3();
+    public static MusicFragment newInstance(String param1, String param2) {
+        MusicFragment fragment = new MusicFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -70,7 +83,28 @@ public class tab3 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_tab3, container, false);
+        View view=inflater.inflate(R.layout.fragment_music, container,false);
+
+        gridView=(GridView)view.findViewById(R.id.grid_view_music);
+        List<ItemObject> allItems=getAllItemObject();
+        gridView.setAdapter(new CustomAdapter(getActivity().getApplicationContext(), allItems));
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity().getApplicationContext(),"Position: "+position,Toast.LENGTH_SHORT).show();
+            }
+        });
+        return view;
+    }
+
+    private List<ItemObject> getAllItemObject(){
+        List<ItemObject> items=new ArrayList<>();
+        items.add(new ItemObject(0,"2002","Anne Marie"));
+        items.add(new ItemObject(0,"Circles","Post Malone"));
+        items.add(new ItemObject(0,"Perfect","Ed Sheeran"));
+        items.add(new ItemObject(0,"Shape Of You","Ed Sheeran"));
+        return items;
     }
 
     @Override
