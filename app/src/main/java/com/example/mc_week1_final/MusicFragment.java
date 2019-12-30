@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,6 +31,10 @@ public class MusicFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     RecyclerView recyclerHome;
+
+    List<Integer> imageList=new ArrayList<>();
+    List<String> titleList=new ArrayList<>();
+    List<String> nameList=new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -75,6 +83,23 @@ public class MusicFragment extends Fragment {
 
         GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 3);
         recyclerHome.setLayoutManager(gridLayoutManager);
+
+        imageList.add(R.drawable.anne_marie);
+        imageList.add(R.drawable.post);
+        imageList.add(R.drawable.ed_sheeran);
+        imageList.add(R.drawable.ed_sheeran);
+
+        titleList.add("2002");
+        titleList.add("Circles");
+        titleList.add("Perfect");
+        titleList.add("Shape Of You");
+
+        nameList.add("Anne Marie");
+        nameList.add("Post Malone");
+        nameList.add("Ed Sheeran");
+        nameList.add("Ed Sheeran");
+
+        recyclerHome.setAdapter(new MusicAdapter(imageList,titleList,nameList));
         return view;
     }
 
