@@ -16,11 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -34,7 +37,7 @@ import java.util.LinkedHashSet;
  * Use the {@link ContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ContactFragment extends Fragment {
+public class ContactFragment extends Fragment implements TextWatcher {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,6 +83,7 @@ public class ContactFragment extends Fragment {
 
     RecyclerView mRecyclerView = null;
     ContactAdapter mAdapter = null;
+    EditText editText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,6 +92,10 @@ public class ContactFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_contact,container,false);
 
         setHasOptionsMenu(true);
+
+        // filter 리스너
+        editText = (EditText)view.findViewById(R.id.contact_filter_text);
+        editText.addTextChangedListener((TextWatcher) this);
 
         // 리사이클러 뷰 어뎁터
         mRecyclerView = view.findViewById(R.id.contact_recycler);
@@ -101,6 +109,21 @@ public class ContactFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        mAdapter.getFilter().filter(charSequence);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+    }
+
+
 
 
     // 안드로이드 연락처 read
@@ -148,6 +171,10 @@ public class ContactFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
+
+
 
     /*@Override
     public void onAttach(Context context) {
