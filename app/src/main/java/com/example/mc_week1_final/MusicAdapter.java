@@ -1,5 +1,11 @@
 package com.example.mc_week1_final;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,51 +15,115 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
 
-    List<Integer> imageList=new ArrayList<>();
-    List<String> titleList=new ArrayList<>();
-    List<String> nameList=new ArrayList<>();
+    private ArrayList<MusicItem> mData;
+    private Context mContext;
 
-    public MusicAdapter(List<Integer> imageList,List<String> titleList, List<String> nameList) {
-        this.imageList = imageList;
-        this.titleList=titleList;
-        this.nameList=nameList;
+    public MusicAdapter(Context context, ArrayList<MusicItem> list) {
+        mContext = context;
+        mData = list;
     }
 
-    public class MusicView extends RecyclerView.ViewHolder{
+    // View Holder 클래스
+    public class MusicView extends RecyclerView.ViewHolder {
         ImageView imageMusic;
         TextView musicTitle, musicName;
 
-        public MusicView(@NonNull View itemView){
+        public MusicView(@NonNull View itemView) {
             super(itemView);
 
-            imageMusic=(ImageView)itemView.findViewById(R.id.image_music);
-            musicTitle=(TextView)itemView.findViewById(R.id.music_title);
-            musicName=(TextView)itemView.findViewById(R.id.music_name);
+            imageMusic = (ImageView) itemView.findViewById(R.id.image_music);
+            musicTitle = (TextView) itemView.findViewById(R.id.music_title);
+            musicName = (TextView) itemView.findViewById(R.id.music_name);
         }
     }
 
     @NonNull
     @Override
     public MusicView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.row_music,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.row_music, parent, false);
 
         return new MusicView(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MusicView holder, int position) {
-        holder.imageMusic.setImageResource(imageList.get(position));
-        holder.musicTitle.setText(titleList.get(position));
-        holder.musicName.setText(nameList.get(position));
+        MusicItem item = mData.get(position);
+
+        holder.musicTitle.setText(item.getTitle());
+        holder.musicName.setText(item.getArtist());
+
+        // album_id로부터 사진 불러오기 (albumart)
+        Bitmap album_image = getAlbumImage(mContext, Integer.parseInt((item.getAlbum_id())),170);
+        if(album_image != null) {
+            holder.imageMusic.setImageBitmap(album_image);
+        }
+        else {    // 이미지 없을 경우
+            holder.imageMusic.setImageResource(R.drawable.no_album_img);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return imageList.size();
+        return mData.size();
     }
+
+
+    // album_id로 앨범 사진 불러오기
+    private static final BitmapFactory.Options options = new BitmapFactory.Options();
+
+    private static Bitmap getAlbumImage(Context context, int album_id, int MAX_IMAGE_SIZE) {
+
+        ContentResolver res = context.getContentResolver();
+        Uri uri = Uri.parse("content://media/external/audio/albumart/" + album_id);
+        if (uri != null) {
+            ParcelFileDescriptor fd = null;
+            try {
+                fd = res.openFileDescriptor(uri, "r");
+
+                //크기를 얻어오기 위한옵션 ,
+                //inJustDecodeBounds값이 true로 설정되면 decoder가 bitmap object에 대해 메모리를 할당하지 않고, 따라서 bitmap을 반환하지도 않는다.
+                // 다만 options fields는 값이 채워지기 때문에 Load 하려는 이미지의 크기를 포함한 정보들을 얻어올 수 있다.
+
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFileDescriptor(
+                        fd.getFileDescriptor(), null, options);
+                int scale = 0;
+                if (options.outHeight > MAX_IMAGE_SIZE || options.outWidth > MAX_IMAGE_SIZE) {
+                    scale = (int) Math.pow(2, (int) Math.round(Math.log(MAX_IMAGE_SIZE / (double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
+                }
+                options.inJustDecodeBounds = false;
+                options.inSampleSize = scale;
+
+                Bitmap b = BitmapFactory.decodeFileDescriptor(
+                        fd.getFileDescriptor(), null, options);
+
+                if (b != null) {
+                    // finally rescale to exactly the size we need
+                    if (options.outWidth != MAX_IMAGE_SIZE || options.outHeight != MAX_IMAGE_SIZE) {
+                        Bitmap tmp = Bitmap.createScaledBitmap(b, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE, true);
+                        b.recycle();
+                        b = tmp;
+                    }
+                }
+                return b;
+            } catch (FileNotFoundException e) {
+            } finally {
+                try {
+                    if (fd != null)
+                        fd.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return null;
+    }
+
 }
+

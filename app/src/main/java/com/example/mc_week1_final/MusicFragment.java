@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 
@@ -35,9 +36,6 @@ public class MusicFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     RecyclerView recyclerHome;
 
-    List<Integer> imageList=new ArrayList<>();
-    List<String> titleList=new ArrayList<>();
-    List<String> nameList=new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -80,50 +78,44 @@ public class MusicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view=inflater.inflate(R.layout.fragment_music2, container, false);
 
+        // recycler adapter
         recyclerHome=(RecyclerView)view.findViewById(R.id.recycler_home);
+        recyclerHome.setAdapter(new MusicAdapter(getContext(), getMusicList()));
 
+        // grid layoutmanager 사용
         GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 3);
         recyclerHome.setLayoutManager(gridLayoutManager);
 
-        imageList.add(R.drawable.anne_marie);
-        imageList.add(R.drawable.post);
-        imageList.add(R.drawable.ed_sheeran);
-        imageList.add(R.drawable.ed_sheeran);
-
-        titleList.add("2002");
-        titleList.add("Circles");
-        titleList.add("Perfect");
-        titleList.add("Shape Of You");
-
-        nameList.add("Anne Marie");
-        nameList.add("Post Malone");
-        nameList.add("Ed Sheeran");
-        nameList.add("Ed Sheeran");
-
-        recyclerHome.setAdapter(new MusicAdapter(imageList,titleList,nameList));
         return view;
     }
 
     // 안드로이드 음악 read
-    public void getMusicList() {
+    public ArrayList<MusicItem> getMusicList() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.ALBUM_ID,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA
-        };
+
         String sortOrder = MediaStore.Audio.Media.TITLE + " COLLATE LOCALIZED ASC";
 
-        Cursor cursor = getContext().getContentResolver().query(uri,projection,null,null,sortOrder);
+        Cursor cursor = getContext().getContentResolver().query(uri,null,null,null,sortOrder);
+        LinkedHashSet<MusicItem> hasList = new LinkedHashSet<>();
 
+        while(cursor.moveToNext()) {
+            MusicItem myMusic = new MusicItem();
+            myMusic.setId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+            myMusic.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+            myMusic.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+            myMusic.setAlbum_id(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
 
+            hasList.add(myMusic);
+        }
 
-
+        ArrayList<MusicItem> musicList = new ArrayList<MusicItem>(hasList);
+        for (int i = 0; i < musicList.size(); i++) {
+            musicList.get(i).setItem_id(i);
+        }
+        return musicList;
 
     }
 

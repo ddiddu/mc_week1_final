@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        askPermissions();
+        ask_contact_Permissions();
+        ask_music_Permissions();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -46,9 +47,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void askPermissions() {
+    private void ask_contact_Permissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},1);
+        }
+    }
+
+    private void ask_music_Permissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
         }
     }
 
