@@ -33,4 +33,10 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 //subsaleview liabrary
     implementation 'com.zolad:zoominimageview:1.0.0' //zoominimageview library
+
+    implementation 'com.karumi:dexter:5.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+
+    implementation 'com.google.android.material:material:1.2.0-alpha02' //material design
+    implementation 'com.makeramen:roundedimageview:2.3.0' //rounded image view
 }

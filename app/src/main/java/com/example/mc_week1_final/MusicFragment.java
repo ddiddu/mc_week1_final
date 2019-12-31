@@ -1,5 +1,6 @@
 package com.example.mc_week1_final;
 
+import android.Manifest;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,11 +9,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +46,8 @@ public class MusicFragment extends Fragment {
     List<Integer> imageList=new ArrayList<>();
     List<String> titleList=new ArrayList<>();
     List<String> nameList=new ArrayList<>();
+
+    String[] items;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,8 +94,10 @@ public class MusicFragment extends Fragment {
 
         recyclerHome=(RecyclerView)view.findViewById(R.id.recycler_home);
 
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 3);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 2);
         recyclerHome.setLayoutManager(gridLayoutManager);
+
+        runtimePermission();
 
         imageList.add(R.drawable.anne_marie);
         imageList.add(R.drawable.post);
@@ -99,7 +114,7 @@ public class MusicFragment extends Fragment {
         nameList.add("Ed Sheeran");
         nameList.add("Ed Sheeran");
 
-        recyclerHome.setAdapter(new MusicAdapter(imageList,titleList,nameList));
+        recyclerHome.setAdapter(new MusicAdapter(getContext(),imageList,titleList,nameList));
         return view;
     }
 
@@ -140,5 +155,62 @@ public class MusicFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    //기기 허용 받은 후 보여주기 여기서 정의하고 View onCreateView 에서 실행됨
+    public void runtimePermission(){
+
+        Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        //disaplay();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    public ArrayList<File> findSong(File file){
+        ArrayList<File> arrayList=new ArrayList<>();
+
+        File[] files=file.listFiles();
+
+        for(File singleFile: files){
+            if(singleFile.isDirectory()&&!singleFile.isHidden()){
+                arrayList.addAll(findSong(singleFile));
+            }
+
+            else{
+                if(singleFile.getName().endsWith(".mp3") ||
+                singleFile.getName().endsWith(".wav")){
+                    arrayList.add(singleFile);
+                }
+            }
+        }
+        return arrayList;
+    }
+
+    //music title 받기
+    void display(){
+        final ArrayList<File> mySongs=findSong(Environment.getExternalStorageDirectory());
+
+        items=new String[mySongs.size()];
+
+        for(int i=0; i<mySongs.size(); i++){
+            items[i]=mySongs.get(i).getName().toString().replace("mp3","").replace("wav","");
+        }
+
+        ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,items);
+        //myListViewForSongs.setAdapter(myAdapter);
     }
 }
