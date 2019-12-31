@@ -97,7 +97,7 @@ public class MusicFragment extends Fragment implements TextWatcher {
         recyclerHome.setAdapter(mAdapter);
 
         // grid layoutmanager 사용
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 3);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 2);
         recyclerHome.setLayoutManager(gridLayoutManager);
 
         return view;
