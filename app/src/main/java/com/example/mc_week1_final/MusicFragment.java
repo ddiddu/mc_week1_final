@@ -1,6 +1,7 @@
 package com.example.mc_week1_final;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +105,35 @@ public class MusicFragment extends Fragment {
         recyclerHome.setAdapter(new MusicAdapter(imageList,titleList,nameList));
         return view;
     }
+
+    // 안드로이드 음악 read
+    public void getMusicList() {
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.ALBUM_ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DATA
+        };
+        String sortOrder = MediaStore.Audio.Media.TITLE + " COLLATE LOCALIZED ASC";
+
+        Cursor cursor = getContext().getContentResolver().query(uri,projection,null,null,sortOrder);
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
