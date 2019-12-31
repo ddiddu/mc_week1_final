@@ -83,14 +83,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
                 String albumImage=item.getAlbum_id();
                 String songName=item.getTitle();
                 String artistName=item.getArtist();
+                String dataPath=item.getDatapath();
+                ArrayList<MusicItem> mySongs = musicDataList;
 
                 //create intent
                 Intent intent=new Intent(mContext, PlayerActivity.class);
                 intent.putExtra("albumImage",albumImage)
                         .putExtra("songName",songName)
                         .putExtra("artistName",artistName)
-                        .putExtra("pos",position);
-                //intent.putExtra("songs",mySongs);
+                        .putExtra("dataPath",dataPath)
+                        .putExtra("pos",position)
+                        .putExtra("mySongs",mySongs);
+
                 mContext.startActivity(intent);
             }
         });

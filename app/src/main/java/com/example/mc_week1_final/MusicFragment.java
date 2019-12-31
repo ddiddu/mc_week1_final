@@ -139,6 +139,7 @@ public class MusicFragment extends Fragment implements TextWatcher {
             myMusic.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
             myMusic.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
             myMusic.setAlbum_id(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+            myMusic.setDatapath(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
 
             hasList.add(myMusic);
         }
@@ -175,6 +176,7 @@ public class MusicFragment extends Fragment implements TextWatcher {
     }
 
     /**
+     *
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
