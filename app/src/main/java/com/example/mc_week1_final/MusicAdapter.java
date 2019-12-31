@@ -2,6 +2,7 @@ package com.example.mc_week1_final;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +40,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
     public class MusicView extends RecyclerView.ViewHolder {
         ImageView imageMusic;
         TextView musicTitle, musicName;
+        RelativeLayout relativeLayout;
 
         public MusicView(@NonNull View itemView) {
             super(itemView);
@@ -45,6 +48,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
             imageMusic = (ImageView) itemView.findViewById(R.id.image_music);
             musicTitle = (TextView) itemView.findViewById(R.id.music_title);
             musicName = (TextView) itemView.findViewById(R.id.music_name);
+
+            relativeLayout=itemView.findViewById(R.id.relative_layout);
         }
     }
 
@@ -57,11 +62,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MusicView holder, int position) {
-        MusicItem item = filteredList.get(position);
-
-        holder.musicTitle.setText(item.getTitle());
-        holder.musicName.setText(item.getArtist());
+    public void onBindViewHolder(@NonNull MusicView holder, final int position) {
+        final MusicItem item = filteredList.get(position);
 
         // album_id로부터 사진 불러오기 (albumart)
         Bitmap album_image = getAlbumImage(mContext, Integer.parseInt((item.getAlbum_id())),170);
@@ -71,6 +73,27 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
         else {    // 이미지 없을 경우
             holder.imageMusic.setImageResource(R.drawable.no_album_img);
         }
+
+        holder.musicTitle.setText(item.getTitle());
+        holder.musicName.setText(item.getArtist());
+
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String albumImage=item.getAlbum_id();
+                String songName=item.getTitle();
+                String artistName=item.getArtist();
+
+                //create intent
+                Intent intent=new Intent(mContext, PlayerActivity.class);
+                intent.putExtra("albumImage",albumImage)
+                        .putExtra("songName",songName)
+                        .putExtra("artistName",artistName)
+                        .putExtra("pos",position);
+                //intent.putExtra("songs",mySongs);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -80,9 +103,9 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
 
 
     // album_id로 앨범 사진 불러오기
-    private static final BitmapFactory.Options options = new BitmapFactory.Options();
+    public static final BitmapFactory.Options options = new BitmapFactory.Options();
 
-    private static Bitmap getAlbumImage(Context context, int album_id, int MAX_IMAGE_SIZE) {
+    public static Bitmap getAlbumImage(Context context, int album_id, int MAX_IMAGE_SIZE) {
 
         ContentResolver res = context.getContentResolver();
         Uri uri = Uri.parse("content://media/external/audio/albumart/" + album_id);

@@ -1,5 +1,6 @@
 package com.example.mc_week1_final;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,6 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -142,14 +150,6 @@ public class MusicFragment extends Fragment implements TextWatcher {
         return musicList;
     }
 
-
-
-
-
-
-
-
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -188,4 +188,61 @@ public class MusicFragment extends Fragment implements TextWatcher {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    //기기 허용 받은 후 보여주기 여기서 정의하고 View onCreateView 에서 실행됨
+    public void runtimePermission(){
+
+        Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        //disaplay();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    /*public ArrayList<File> findSong(File file){
+        ArrayList<File> arrayList=new ArrayList<>();
+
+        File[] files=file.listFiles();
+
+        for(File singleFile: files){
+            if(singleFile.isDirectory()&&!singleFile.isHidden()){
+                arrayList.addAll(findSong(singleFile));
+            }
+
+            else{
+                if(singleFile.getName().endsWith(".mp3") ||
+                singleFile.getName().endsWith(".wav")){
+                    arrayList.add(singleFile);
+                }
+            }
+        }
+        return arrayList;
+    }*/
+
+    //music title 받기
+    /*void display(){
+        final ArrayList<File> mySongs=findSong(Environment.getExternalStorageDirectory());
+
+        items=new String[mySongs.size()];
+
+        for(int i=0; i<mySongs.size(); i++){
+            items[i]=mySongs.get(i).getName().toString().replace("mp3","").replace("wav","");
+        }
+
+        ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,items);
+        myListViewForSongs.setAdapter(myAdapter);
+    }*/
 }
