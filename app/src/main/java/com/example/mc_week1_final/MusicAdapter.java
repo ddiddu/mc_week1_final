@@ -9,6 +9,8 @@ import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,14 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
+public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> implements Filterable {
 
-    private ArrayList<MusicItem> mData;
+    private ArrayList<MusicItem> musicDataList;
+    private ArrayList<MusicItem> filteredList;
     private Context mContext;
 
     public MusicAdapter(Context context, ArrayList<MusicItem> list) {
         mContext = context;
-        mData = list;
+        musicDataList = list;
+        filteredList = list;
     }
 
     // View Holder 클래스
@@ -54,7 +58,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
 
     @Override
     public void onBindViewHolder(@NonNull MusicView holder, int position) {
-        MusicItem item = mData.get(position);
+        MusicItem item = filteredList.get(position);
 
         holder.musicTitle.setText(item.getTitle());
         holder.musicName.setText(item.getArtist());
@@ -71,7 +75,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return filteredList.size();
     }
 
 
@@ -123,6 +127,38 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {       // performFiltering, publishResults 필수
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();      // 입력받은 값 string으로 변경
+                if (charString.isEmpty()) {
+                    filteredList = musicDataList;
+                }             // 검색값 없으면, 전체 연락처
+                else {
+                    ArrayList<MusicItem> filteringList = new ArrayList<>();   // 필터링 중, 검색된 연락처 저장할 변수
+                    for (MusicItem name : musicDataList) {                    // 반복문으로 전체 필터 체크
+                        if (name.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteringList.add(name);
+                        }
+                    }
+                    filteredList = filteringList;       // 검색된 리스트ㄱ
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredList = (ArrayList<MusicItem>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
 }

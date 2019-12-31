@@ -11,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.List;
  * Use the {@link MusicFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MusicFragment extends Fragment {
+public class MusicFragment extends Fragment implements TextWatcher {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -74,6 +77,9 @@ public class MusicFragment extends Fragment {
         }
     }
 
+    MusicAdapter mAdapter = null;
+    EditText editText;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,15 +87,33 @@ public class MusicFragment extends Fragment {
 
         View view=inflater.inflate(R.layout.fragment_music2, container, false);
 
+        // Edit view
+        editText = (EditText)view.findViewById(R.id.music_filter_text);
+        editText.addTextChangedListener((TextWatcher) this);
+
         // recycler adapter
         recyclerHome=(RecyclerView)view.findViewById(R.id.recycler_home);
-        recyclerHome.setAdapter(new MusicAdapter(getContext(), getMusicList()));
+        mAdapter = new MusicAdapter(getContext(), getMusicList());
+        recyclerHome.setAdapter(mAdapter);
 
         // grid layoutmanager 사용
         GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity().getApplicationContext(), 3);
         recyclerHome.setLayoutManager(gridLayoutManager);
 
         return view;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        mAdapter.getFilter().filter(charSequence);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
     }
 
     // 안드로이드 음악 read
@@ -116,7 +140,6 @@ public class MusicFragment extends Fragment {
             musicList.get(i).setItem_id(i);
         }
         return musicList;
-
     }
 
 
