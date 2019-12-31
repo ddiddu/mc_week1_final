@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class PlayerActivity extends AppCompatActivity {
 
     Button btn_next, btn_previous, btn_pause;
-    TextView songTextLabel;
+    TextView songTextLabel, artistTextLabel;
     SeekBar songSeekbar;
 
     static MediaPlayer myMediaPlayer;
@@ -38,10 +38,11 @@ public class PlayerActivity extends AppCompatActivity {
         btn_previous=(Button)findViewById(R.id.previous);
         btn_pause=(Button)findViewById(R.id.pause);
         songTextLabel=(TextView)findViewById(R.id.songLabel);
+        artistTextLabel=(TextView)findViewById(R.id.artistLabel);
         songSeekbar=(SeekBar)findViewById(R.id.seekBar);
 
 
-        /*updateseekBar=new Thread(){
+        updateseekBar=new Thread(){
             @Override
             public void run() {
                 int totalDuration=myMediaPlayer.getDuration();
@@ -73,9 +74,12 @@ public class PlayerActivity extends AppCompatActivity {
         sname=mySongs.get(position).getName().toString();
 
         String songName=i.getStringExtra("songname");
+        String artistName=i.getStringExtra("artistname");
 
         songTextLabel.setText(songName);
         songTextLabel.setSelected(true);
+        artistTextLabel.setText(artistName);
+        artistTextLabel.setSelected(true);
 
         position= bundle.getInt("pos",0);
 
@@ -157,8 +161,6 @@ public class PlayerActivity extends AppCompatActivity {
 
                 myMediaPlayer.start();
             }
-        });*/
-
-
+        });
     }
 }

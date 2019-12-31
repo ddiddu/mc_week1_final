@@ -76,18 +76,20 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> {
             @Override
             public void onClick(View v) {
                 String songName=titleList.get(position);
+                String artistName=nameList.get(position)
 
-                BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+                /*BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
                 View bottomSheetView=LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog, holder.linearLayout);
                 bottomSheetDialog.setContentView(bottomSheetView);
-                bottomSheetDialog.show();
+                bottomSheetDialog.show();*/
 
-                /*//create intent
+                //create intent
                 Intent intent=new Intent(context,PlayerActivity.class);
                 //intent.putExtra("songs",mySongs);
                 intent.putExtra("songname",songName)
-                        .putExtra("pos",position);
-                context.startActivity(intent);*/
+                        .putExtra("pos",position)
+                        .putExtra("artistname",artistName);
+                context.startActivity(intent);
             }
         });
     }
