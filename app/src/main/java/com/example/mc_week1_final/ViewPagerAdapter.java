@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
@@ -24,7 +27,6 @@ public class ViewPagerAdapter extends PagerAdapter {
             R.drawable.__________ai________free_yoga_posture_vector_, R.drawable._________ai________free_cake_image_vector_, R.drawable._________ai________free_cake_vector_download_,
             R.drawable._________ai________free_hot_air_balloon_vector_, R.drawable.________ai________free_liquid_medicine_vector_
     };
-
 
     public ViewPagerAdapter(Context context) {
         this.context=context;
@@ -45,8 +47,11 @@ public class ViewPagerAdapter extends PagerAdapter {
         layoutInflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view=layoutInflater.inflate(R.layout.custom_layout,null);
 
-        ImageView imageView=(ImageView)view.findViewById(R.id.myImageView);
-        imageView.setImageResource(images[position]);
+        //ImageView imageView=(ImageView)view.findViewById(R.id.myImageView);
+        //imageView.setImageResource(images[position]);
+
+        SubsamplingScaleImageView imageView=(SubsamplingScaleImageView)view.findViewById(R.id.myImageView);
+        imageView.setImage(ImageSource.resource(images[position]));
 
         ViewPager viewPager=(ViewPager)container;
         viewPager.addView(view);

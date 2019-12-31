@@ -1,14 +1,18 @@
 package com.example.mc_week1_final;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -36,6 +40,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
@@ -92,9 +97,9 @@ public class PlayerActivity extends AppCompatActivity {
         artistTextLabel.setText(artistName);
         artistTextLabel.setSelected(true);
 
-        /*mySongs=(ArrayList)bundle.getParcelableArrayList("songs");
+        mySongs=(ArrayList)bundle.getParcelableArrayList("songs");
 
-        sname=mySongs.get(position).getName().toString();
+        /*sname=mySongs.get(position).getName().toString();
 
         position= bundle.getInt("pos",0);
 
