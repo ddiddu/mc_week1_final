@@ -29,6 +29,7 @@ import com.r0adkll.slidr.model.SlidrInterface;
 import com.r0adkll.slidr.model.SlidrPosition;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.example.mc_week1_final.MusicAdapter.getAlbumImage;
@@ -40,13 +41,16 @@ public class PlayerActivity extends AppCompatActivity {
     TextView songTextLabel, artistTextLabel;
     SeekBar songSeekbar, volumeSeekBar;
 
-    static MediaPlayer myMediaPlayer;
+    MediaPlayer myMediaPlayer;
     int position;
 
-    ArrayList<File> mySongs;
+    ArrayList<MusicItem> mySongs;
     Thread updateseekBar;
 
+    // View 값
     String sname;
+    String artist;
+    String album_id;
 
     private SlidrInterface slidr;
     private SlidrConfig config= new SlidrConfig.Builder()
@@ -75,6 +79,37 @@ public class PlayerActivity extends AppCompatActivity {
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+       // myMediaPlayer = new MediaPlayer();
+
+        Intent i = getIntent();
+        Bundle bundle = i.getExtras();
+
+        String albumImage = i.getStringExtra("albumImage");
+        String songName = i.getStringExtra("songName");
+        String artistName = i.getStringExtra("artistName");
+        String dataPath = i.getStringExtra("dataPath");
+        mySongs = i.getParcelableArrayListExtra("mySongs");
+        position = i.getExtras().getInt("pos");
+
+
+        songTextLabel.setText(songName);
+        songTextLabel.setSelected(true);
+        artistTextLabel.setText(artistName);
+        artistTextLabel.setSelected(true);
+
+        // album_id로부터 사진 불러오기 (albumart)
+        Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((albumImage)), 170);
+        if (album_image != null) {
+            albumImageLabel.setImageBitmap(album_image);
+        } else {    // 이미지 없을 경우
+            albumImageLabel.setImageResource(R.drawable.no_album_img);
+        }
+
+        // 선택된 노래 재생
+        set_datapath(dataPath);
+        play();
+
+        // seekbar  설정
         updateseekBar = new Thread() {
             @Override
             public void run() {
@@ -93,43 +128,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         };
 
-        if (myMediaPlayer != null) {
-            myMediaPlayer.stop();
-            myMediaPlayer.release();
-        }
 
-        Intent i = getIntent();
-        Bundle bundle = i.getExtras();
-
-        String albumImage=i.getStringExtra("albumImage");
-        String songName = i.getStringExtra("songName");
-        String artistName = i.getStringExtra("artistName");
-
-        // album_id로부터 사진 불러오기 (albumart)
-        Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((albumImage)),170);
-        if(album_image != null) {
-            albumImageLabel.setImageBitmap(album_image);
-        }
-        else {    // 이미지 없을 경우
-            albumImageLabel.setImageResource(R.drawable.no_album_img);
-        }
-
-        songTextLabel.setText(songName);
-        songTextLabel.setSelected(true);
-        artistTextLabel.setText(artistName);
-        artistTextLabel.setSelected(true);
-
-        mySongs=(ArrayList)bundle.getParcelableArrayList("songs");
-
-        /*sname=mySongs.get(position).getName().toString();
-
-        position= bundle.getInt("pos",0);
-
-        Uri u=Uri.parse(mySongs.get(position).toString());
-
-        myMediaPlayer=MediaPlayer.create(getApplicationContext(),u);
-
-        myMediaPlayer.start();
         songSeekbar.setMax(myMediaPlayer.getDuration());
 
         updateseekBar.start();
@@ -137,6 +136,9 @@ public class PlayerActivity extends AppCompatActivity {
         songSeekbar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         songSeekbar.getThumb().setColorFilter(getResources().getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN);
 
+
+
+        // seekbar change 리스너
         songSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -154,6 +156,9 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+
+
+        // 멈춤, 재생 클릭
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,40 +175,148 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        // next 클릭
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myMediaPlayer.stop();
                 myMediaPlayer.release();
-                position=((position+1)%mySongs.size());
 
-                Uri u=Uri.parse(mySongs.get(position).toString());
+                btn_pause.setBackgroundResource(R.drawable.ic_pause);
 
-                myMediaPlayer=MediaPlayer.create(getApplicationContext(),u);
+                position = ((position + 1) % mySongs.size());
+                String dataPath = mySongs.get(position).getDatapath();
 
-                sname=mySongs.get(position).getName().toString();
+                set_datapath(dataPath);
+                play();
+
+                // View 값
+                sname = mySongs.get(position).getTitle();
                 songTextLabel.setText(sname);
-
-                myMediaPlayer.start();
+                artist = mySongs.get(position).getArtist();
+                artistTextLabel.setText(artist);
+                album_id = mySongs.get(position).getAlbum_id();
+                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)), 170);
+                if (album_image != null) {
+                    albumImageLabel.setImageBitmap(album_image);
+                } else {    // 이미지 없을 경우
+                    albumImageLabel.setImageResource(R.drawable.no_album_img);
+                }
             }
         });
 
+
+        // previous 클릭
         btn_previous.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                btn_pause.setBackgroundResource(R.drawable.ic_pause);
+
                 myMediaPlayer.stop();
                 myMediaPlayer.release();
 
-                position=((position-1)<0)?(mySongs.size()-1):(position-1);
-                Uri u=Uri.parse(mySongs.get(position).toString());
-                myMediaPlayer=MediaPlayer.create(getApplicationContext(),u);
+                position = ((position - 1) < 0) ? (mySongs.size() - 1) : (position - 1);
+                String dataPath = mySongs.get(position).getDatapath();
 
-                sname=mySongs.get(position).getName().toString();
+                set_datapath(dataPath);
+                play();
+                //myMediaPlayer.start();
+
+                // View 값
+                sname = mySongs.get(position).getTitle();
                 songTextLabel.setText(sname);
-
-                myMediaPlayer.start();
+                artist = mySongs.get(position).getArtist();
+                artistTextLabel.setText(artist);
+                album_id = mySongs.get(position).getAlbum_id();
+                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)), 170);
+                if (album_image != null) {
+                    albumImageLabel.setImageBitmap(album_image);
+                } else {    // 이미지 없을 경우
+                    albumImageLabel.setImageResource(R.drawable.no_album_img);
+                }
             }
-        });*/
+        });
+
+
+
+/*
+        // 재생 완료 후 다음곡 자동 재생
+        myMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                btn_next.performClick();
+            }
+        });
+
+
+        // 재생 완료 후 다음곡 자동 재생
+        myMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("HIHIHIHIHIIHI");
+                System.out.println("끝!");
+
+
+                position=((position+1)%mySongs.size());
+                String dataPath = mySongs.get(position).getDatapath();
+
+                play(dataPath);
+
+                // View 값
+                sname=mySongs.get(position).getTitle();
+                songTextLabel.setText(sname);
+                artist=mySongs.get(position).getArtist();
+                artistTextLabel.setText(artist);
+                album_id=mySongs.get(position).getAlbum_id();
+                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)), 170);
+                if (album_image != null) {
+                    albumImageLabel.setImageBitmap(album_image);
+                } else {    // 이미지 없을 경우
+                    albumImageLabel.setImageResource(R.drawable.no_album_img);
+                }
+            }
+
+
+        });
+*/
+
+
+    } // oncreate 끝
+
+
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        myMediaPlayer.release();
+
+    }
+
+
+
+    // 음악 play 함수
+    public void set_datapath(String dataPath) {
+        myMediaPlayer = new MediaPlayer();
+
+        // 음악 play
+        try {
+            myMediaPlayer.setDataSource(dataPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void play(){
+        // prepare 후 start 해야함 (-38,0) 오류 안나게
+        myMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.start();
+            }
+        });
+        myMediaPlayer.prepareAsync();
     }
 
     @Override
@@ -231,5 +344,5 @@ public class PlayerActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    }
 
+}
