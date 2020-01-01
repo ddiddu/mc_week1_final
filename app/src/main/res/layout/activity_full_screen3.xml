@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".FullScreenActivity3">
+    tools:context=".FullScreenActivity3"
+    android:background="#ffffff"
+    >
 
     <androidx.viewpager.widget.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/myViewPager">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/myViewPager">
 
     </androidx.viewpager.widget.ViewPager>
 
