@@ -1,14 +1,17 @@
 package com.example.mc_week1_final;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
@@ -30,6 +33,7 @@ public class FullScreenActivity2 extends Activity implements ViewSwitcher.ViewFa
             R.drawable.__________ai________free_yoga_posture_vector_, R.drawable._________ai________free_cake_image_vector_, R.drawable._________ai________free_cake_vector_download_,
             R.drawable._________ai________free_hot_air_balloon_vector_, R.drawable.________ai________free_liquid_medicine_vector_
     };
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class FullScreenActivity2 extends Activity implements ViewSwitcher.ViewFa
         setContentView(R.layout.activity_full_screen2);
 
         context=FullScreenActivity2.this;
-        Gallery gallery=findViewById(R.id.gallery);
+        /*Gallery gallery=findViewById(R.id.gallery);
 
         final ImageSwitcher imageSwitcher=findViewById(R.id.imageSwitcher);
         imageSwitcher.setFactory(FullScreenActivity2.this);
@@ -52,6 +56,27 @@ public class FullScreenActivity2 extends Activity implements ViewSwitcher.ViewFa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 imageItem=position;
                 imageSwitcher.setImageResource(images[position]);
+            }
+        });*/
+        viewPager=(ViewPager)findViewById(R.id.myViewPager);
+
+        final ImageSwitcher imageSwitcher=findViewById(R.id.imageSwitcher);
+        imageSwitcher.setFactory(FullScreenActivity2.this);
+        imageSwitcher.setInAnimation(AnimationUtils.loadAnimation(FullScreenActivity2.this, android.R.anim.fade_in));
+        imageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(FullScreenActivity2.this, android.R.anim.fade_out));
+        imageSwitcher.setAlpha(Float.parseFloat("50.0"));
+
+        ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(this);
+
+        int ID = getIntent().getIntExtra("id",1);
+
+        //viewPager.setAdapter(new ImageAdapter2(getApplicationContext()));
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setCurrentItem(ID);
+        viewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSwitcher.setImageResource(images[imageItem]);
             }
         });
     }
@@ -92,7 +117,8 @@ public class FullScreenActivity2 extends Activity implements ViewSwitcher.ViewFa
             public View getView(int position, View convertView, ViewGroup parent) {
                 ImageView imageView=new ImageView(mContext);
                 imageView.setImageResource(images[position]);
-                imageView.setLayoutParams(new Gallery.LayoutParams(200,150));
+                //imageView.setLayoutParams(new Gallery.LayoutParams(200,150));
+                imageView.setLayoutParams(new ViewPager.LayoutParams(mContext,null));
                 return imageView;
             }
         }

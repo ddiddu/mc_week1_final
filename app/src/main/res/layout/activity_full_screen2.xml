@@ -7,10 +7,9 @@
     tools:context=".FullScreenActivity">
 
     <Gallery
-        android:id="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:id="@+id/myViewPager">
 
     </Gallery>
 

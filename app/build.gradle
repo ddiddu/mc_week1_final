@@ -37,6 +37,8 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.google.android.material:material:1.0.0'
 
-    implementation 'com.google.android.material:material:1.2.0-alpha02' //material design
-    implementation 'com.makeramen:roundedimageview:2.3.0' //rounded image view
+    implementation 'com.google.android.material:material:1.2.0-alpha03' //material design
+    implementation 'com.makeramen:roundedimageview:2.3.0'//rounded image view
+
+    implementation 'com.r0adkll:slidableactivity:2.0.6'
 }

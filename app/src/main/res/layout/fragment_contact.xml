@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ContactFragment">
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/contact_filter_text"
+        android:layout_width="320dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/filter_edittext"
+
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="12dp"
+        android:textSize="16sp"
+
+        android:inputType="text|textNoSuggestions"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contact_recycler"
@@ -11,4 +25,4 @@
         android:layout_height="wrap_content"
         />
 
-</FrameLayout>
+</LinearLayout>
