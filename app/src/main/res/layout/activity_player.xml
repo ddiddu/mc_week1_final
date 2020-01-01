@@ -105,7 +105,7 @@
                 android:id="@+id/previous"/>
 
             <SeekBar
-                android:layout_width="400dp"
+                android:layout_width="500dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/seekBar"
                 android:layout_alignParentBottom="true"

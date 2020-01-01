@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +30,7 @@ public class FullScreenActivity3 extends AppCompatActivity {
             .build();
 
     ArrayList<ImageItem> myImages;
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,8 @@ public class FullScreenActivity3 extends AppCompatActivity {
         Bundle bundle = i.getExtras();
 
         myImages = i.getParcelableArrayListExtra("myImages");
+        id= i.getExtras().getInt("id");
+
 
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(this, myImages);
 
@@ -70,9 +75,11 @@ public class FullScreenActivity3 extends AppCompatActivity {
             case R.id.share_button:
                 Intent sharingIntent=new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("image/jpeg");
-                String shareBody="사진";
 
-                sharingIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+                String idColumn=myImages.get(id).getIdColum();
+                Uri uri = Uri.parse("content://media/external/images/media/" + idColumn);
+
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
                 startActivity(Intent.createChooser(sharingIntent,"Share Using"));
                 break;

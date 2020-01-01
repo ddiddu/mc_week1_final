@@ -68,9 +68,10 @@ public class PlayerActivity extends AppCompatActivity {
             while (isPlaying) {
                 try {
                     sleep(100);
-                    currentPosition = myMediaPlayer.getCurrentPosition();
-                    songSeekbar.setProgress(currentPosition);
-
+                    if(isPlaying){
+                        currentPosition = myMediaPlayer.getCurrentPosition();
+                        songSeekbar.setProgress(currentPosition);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -242,7 +243,7 @@ public class PlayerActivity extends AppCompatActivity {
 
 
 
-/*
+
         // 재생 완료 후 다음곡 자동 재생
         myMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -251,7 +252,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
-
+/*
         // 재생 완료 후 다음곡 자동 재생
         myMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
