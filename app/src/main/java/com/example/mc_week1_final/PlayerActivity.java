@@ -1,8 +1,11 @@
 package com.example.mc_week1_final;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,12 +14,19 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrInterface;
+import com.r0adkll.slidr.model.SlidrPosition;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +38,7 @@ public class PlayerActivity extends AppCompatActivity {
     Button btn_next, btn_previous, btn_pause;
     ImageView albumImageLabel;
     TextView songTextLabel, artistTextLabel;
-    SeekBar songSeekbar;
+    SeekBar songSeekbar, volumeSeekBar;
 
     static MediaPlayer myMediaPlayer;
     int position;
@@ -38,11 +48,19 @@ public class PlayerActivity extends AppCompatActivity {
 
     String sname;
 
+    private SlidrInterface slidr;
+    private SlidrConfig config= new SlidrConfig.Builder()
+            .position(SlidrPosition.TOP)
+            .build();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+
+        slidr=Slidr.attach(this,config);
+        slidr.unlock();
 
         btn_next = (Button)findViewById(R.id.next);
         btn_previous = (Button)findViewById(R.id.previous);
@@ -52,6 +70,10 @@ public class PlayerActivity extends AppCompatActivity {
         songTextLabel = (TextView)findViewById(R.id.songLabel);
         artistTextLabel = (TextView)findViewById(R.id.artistLabel);
         songSeekbar = (SeekBar)findViewById(R.id.seekBar);
+        //volumeSeekBar=(SeekBar)findViewById(R.id.volumeBar);
+
+        Toolbar toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         updateseekBar = new Thread() {
             @Override
@@ -182,6 +204,32 @@ public class PlayerActivity extends AppCompatActivity {
                 myMediaPlayer.start();
             }
         });*/
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()){
+
+            case R.id.share_button:
+                Intent sharingIntent=new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody="Your Body Here";
+                String shareSubject="Your Subject Here";
+
+                sharingIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT,shareSubject);
+
+                startActivity(Intent.createChooser(sharingIntent,"Share Using"));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
     }
 

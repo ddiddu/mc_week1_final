@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".PlayerActivity"
             android:theme="@style/BottomSheetDialogTheme"></activity>
-        <activity android:name=".FullScreenActivity3" />
+        <activity android:name=".FullScreenActivity3"
+            android:theme="@style/AppTheme.SlidrActivityTheme"/>
         <activity android:name=".FullScreenActivity2" />
         <activity android:name=".FullScreenActivity" />
         <activity android:name=".MainActivity">
