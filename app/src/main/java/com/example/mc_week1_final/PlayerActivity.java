@@ -45,7 +45,6 @@ public class PlayerActivity extends AppCompatActivity {
     int position;
 
     ArrayList<MusicItem> mySongs;
-    Thread updateseekBar;
 
     // View 값
     String sname;
@@ -56,6 +55,28 @@ public class PlayerActivity extends AppCompatActivity {
     private SlidrConfig config= new SlidrConfig.Builder()
             .position(SlidrPosition.TOP)
             .build();
+
+
+    // seekbar -> class로 thread
+    boolean isPlaying = false;   // thread 플래그(시작, 정지 구분)
+
+    class updateseekBar extends Thread {
+        @Override
+        public void run() {
+            int currentPosition;
+
+            while (isPlaying) {
+                try {
+                    sleep(100);
+                    currentPosition = myMediaPlayer.getCurrentPosition();
+                    songSeekbar.setProgress(currentPosition);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 
     @Override
@@ -79,8 +100,6 @@ public class PlayerActivity extends AppCompatActivity {
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Now Playing");
-
-       // myMediaPlayer = new MediaPlayer();
 
         Intent i = getIntent();
         Bundle bundle = i.getExtras();
@@ -110,33 +129,8 @@ public class PlayerActivity extends AppCompatActivity {
         set_datapath(dataPath);
         play();
 
-        // seekbar  설정
-        updateseekBar = new Thread() {
-            @Override
-            public void run() {
-                int totalDuration = myMediaPlayer.getDuration();
-                int currentPosition = 0;
-
-                while (currentPosition < totalDuration) {
-                    try {
-                        sleep(500);
-                        currentPosition = myMediaPlayer.getCurrentPosition();
-                        songSeekbar.setProgress(currentPosition);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-
-
-        songSeekbar.setMax(myMediaPlayer.getDuration());
-
-        updateseekBar.start();
-
         songSeekbar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         songSeekbar.getThumb().setColorFilter(getResources().getColor(R.color.colorAccent),PorterDuff.Mode.SRC_IN);
-
 
 
         // seekbar change 리스너
@@ -148,11 +142,12 @@ public class PlayerActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
+            // 드래그 멈추면
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                isPlaying = true;
                 myMediaPlayer.seekTo(seekBar.getProgress());
             }
         });
@@ -168,10 +163,13 @@ public class PlayerActivity extends AppCompatActivity {
                 if(myMediaPlayer.isPlaying()){
                     btn_pause.setBackgroundResource(R.drawable.ic_play);
                     myMediaPlayer.pause();
+                    isPlaying = false;
                 }
                 else{
                     btn_pause.setBackgroundResource(R.drawable.ic_pause);
                     myMediaPlayer.start();
+                    isPlaying = true;
+                    new updateseekBar().start();
                 }
             }
         });
@@ -181,6 +179,7 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 myMediaPlayer.stop();
+                myMediaPlayer.reset();
                 myMediaPlayer.release();
 
                 btn_pause.setBackgroundResource(R.drawable.ic_pause);
@@ -203,18 +202,19 @@ public class PlayerActivity extends AppCompatActivity {
                 } else {    // 이미지 없을 경우
                     albumImageLabel.setImageResource(R.drawable.no_album_img);
                 }
+                new updateseekBar().start();
             }
         });
 
 
         // previous 클릭
         btn_previous.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 btn_pause.setBackgroundResource(R.drawable.ic_pause);
 
                 myMediaPlayer.stop();
+                myMediaPlayer.reset();
                 myMediaPlayer.release();
 
                 position = ((position - 1) < 0) ? (mySongs.size() - 1) : (position - 1);
@@ -236,6 +236,7 @@ public class PlayerActivity extends AppCompatActivity {
                 } else {    // 이미지 없을 경우
                     albumImageLabel.setImageResource(R.drawable.no_album_img);
                 }
+                new updateseekBar().start();
             }
         });
 
@@ -290,8 +291,15 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
-        myMediaPlayer.release();
+        if(myMediaPlayer.isPlaying()){
+            myMediaPlayer.pause();
+            isPlaying = false;
+        }
+        isPlaying = false;
 
+        myMediaPlayer.reset();
+        myMediaPlayer.release();
+        updateseekBar.interrupted();
     }
 
 
@@ -315,6 +323,11 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mp.start();
+
+                // seekbar 시작
+                songSeekbar.setMax(myMediaPlayer.getDuration());
+                new updateseekBar().start();
+                isPlaying = true;
             }
         });
         myMediaPlayer.prepareAsync();
