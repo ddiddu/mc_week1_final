@@ -29,7 +29,7 @@
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:elevation="30dp"
-            app:cardCornerRadius="5dp"
+            app:cardCornerRadius="10dp"
             android:layout_marginBottom="15dp">
             <com.makeramen.roundedimageview.RoundedImageView
                 android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:src="@drawable/anne_marie"
                 android:id="@+id/albumLabel"
                 android:background="#ffffff"
-                app:riv_corner_radius="5dp">
+                app:riv_corner_radius="10dp">
             </com.makeramen.roundedimageview.RoundedImageView>
         </androidx.cardview.widget.CardView>
 

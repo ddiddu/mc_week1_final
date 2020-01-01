@@ -9,6 +9,13 @@
     android:background="#ffffff"
     >
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/photo_toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
     <androidx.viewpager.widget.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

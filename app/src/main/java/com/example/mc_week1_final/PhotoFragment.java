@@ -2,12 +2,17 @@ package com.example.mc_week1_final;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 
 /**
@@ -25,12 +33,13 @@ import android.widget.GridView;
  * Use the {@link PhotoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements TextWatcher {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     GridView gridView;
+    ImageAdapter imageAdapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -77,13 +86,16 @@ public class PhotoFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_photo,container,false);
 
         gridView=(GridView)view.findViewById(R.id.grid_view);
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext())); //context를 이 activity에서 가져오는 것
+        imageAdapter=new ImageAdapter(getContext(), getImageList());
+        gridView.setAdapter(imageAdapter); //context를 이 activity에서 가져오는 것
+
+        final ArrayList<ImageItem> myImages = getImageList();
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent=new Intent(getActivity().getApplicationContext(),FullScreenActivity3.class);
-                intent.putExtra("id",position);
+                intent.putExtra("id",position).putExtra("myImages", myImages);
                 startActivity(intent);
             }
         });
@@ -118,6 +130,43 @@ public class PhotoFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        imageAdapter.getFilter().filter(charSequence);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+    }
+
+    // 안드로이드 사진 read
+    public ArrayList<ImageItem> getImageList() {
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String sortOrder = MediaStore.Images.Media._ID + " COLLATE LOCALIZED ASC";
+
+        Cursor cursor = getContext().getContentResolver().query(uri,null,null,null,sortOrder);
+        LinkedHashSet<ImageItem> hasList = new LinkedHashSet<>();
+
+        while(cursor.moveToNext()) {
+            ImageItem myImage = new ImageItem();
+            myImage.setIdColum(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID)));
+            myImage.setDisplayName(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)));
+
+            hasList.add(myImage);
+        }
+
+        ArrayList<ImageItem> imageList = new ArrayList<ImageItem>(hasList);
+        for (int i = 0; i < imageList.size(); i++) {
+            imageList.get(i).setItem_id(i);
+        }
+        return imageList;
     }
 
     /**

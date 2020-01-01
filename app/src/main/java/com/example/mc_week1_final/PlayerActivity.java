@@ -78,6 +78,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Now Playing");
 
        // myMediaPlayer = new MediaPlayer();
 
@@ -98,7 +99,7 @@ public class PlayerActivity extends AppCompatActivity {
         artistTextLabel.setSelected(true);
 
         // album_id로부터 사진 불러오기 (albumart)
-        Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((albumImage)), 170);
+        Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((albumImage)));
         if (album_image != null) {
             albumImageLabel.setImageBitmap(album_image);
         } else {    // 이미지 없을 경우
@@ -196,7 +197,7 @@ public class PlayerActivity extends AppCompatActivity {
                 artist = mySongs.get(position).getArtist();
                 artistTextLabel.setText(artist);
                 album_id = mySongs.get(position).getAlbum_id();
-                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)), 170);
+                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)));
                 if (album_image != null) {
                     albumImageLabel.setImageBitmap(album_image);
                 } else {    // 이미지 없을 경우
@@ -229,7 +230,7 @@ public class PlayerActivity extends AppCompatActivity {
                 artist = mySongs.get(position).getArtist();
                 artistTextLabel.setText(artist);
                 album_id = mySongs.get(position).getAlbum_id();
-                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)), 170);
+                Bitmap album_image = getAlbumImage(getApplicationContext(), Integer.parseInt((album_id)));
                 if (album_image != null) {
                     albumImageLabel.setImageBitmap(album_image);
                 } else {    // 이미지 없을 경우
@@ -333,8 +334,8 @@ public class PlayerActivity extends AppCompatActivity {
             case R.id.share_button:
                 Intent sharingIntent=new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody="Your Body Here";
-                String shareSubject="Your Subject Here";
+                String shareBody=mySongs.get(position).getArtist().toString();
+                String shareSubject=mySongs.get(position).getTitle().toString();
 
                 sharingIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT,shareSubject);

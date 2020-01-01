@@ -66,7 +66,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
         final MusicItem item = filteredList.get(position);
 
         // album_id로부터 사진 불러오기 (albumart)
-        Bitmap album_image = getAlbumImage(mContext, Integer.parseInt((item.getAlbum_id())),170);
+        Bitmap album_image = getAlbumImage(mContext, Integer.parseInt((item.getAlbum_id())));
         if(album_image != null) {
             holder.imageMusic.setImageBitmap(album_image);
         }
@@ -109,7 +109,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
     // album_id로 앨범 사진 불러오기
     public static final BitmapFactory.Options options = new BitmapFactory.Options();
 
-    public static Bitmap getAlbumImage(Context context, int album_id, int MAX_IMAGE_SIZE) {
+    public static Bitmap getAlbumImage(Context context, int album_id) {
 
         ContentResolver res = context.getContentResolver();
         Uri uri = Uri.parse("content://media/external/audio/albumart/" + album_id);
@@ -126,9 +126,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
                 BitmapFactory.decodeFileDescriptor(
                         fd.getFileDescriptor(), null, options);
                 int scale = 0;
-                if (options.outHeight > MAX_IMAGE_SIZE || options.outWidth > MAX_IMAGE_SIZE) {
-                    scale = (int) Math.pow(2, (int) Math.round(Math.log(MAX_IMAGE_SIZE / (double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
-                }
                 options.inJustDecodeBounds = false;
                 options.inSampleSize = scale;
 
@@ -137,11 +134,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicView> i
 
                 if (b != null) {
                     // finally rescale to exactly the size we need
-                    if (options.outWidth != MAX_IMAGE_SIZE || options.outHeight != MAX_IMAGE_SIZE) {
-                        Bitmap tmp = Bitmap.createScaledBitmap(b, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE, true);
-                        b.recycle();
-                        b = tmp;
-                    }
                 }
                 return b;
             } catch (FileNotFoundException e) {
